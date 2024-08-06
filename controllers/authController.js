@@ -1,57 +1,33 @@
-const users = [
-    {
-        id : 1,
-        username : "crimnode",
-        firstname : "Connect",
-        lastname : "Crimson",
-        password : "1234567",
-        email : "crimnode@me.in"
-    },
-    {
-        id : 2,
-        username : "crimnode",
-        firstname : "Connect",
-        lastname : "Crimson",
-        password : "1234567",
-        email : "crimnode@me.in"
-    },
-    {
-        id : 3,
-        username : "crimnode",
-        firstname : "Connect",
-        lastname : "Crimson",
-        password : "1234567",
-        email : "crimnode@me.in"
-    },
-    {
-        id : 4,
-        username : "crimnode",
-        firstname : "Connect",
-        lastname : "Crimson",
-        password : "1234567",
-        email : "crimnode@me.in"
-    }
-
-]
+const asyncHandler = require("express-async-handler")
+const User = require("../models/userModel.js")
 
 //handling errors
 
-exports.register = async(req,res)=>{
-    //create a json object for a user registration 
-    const userId = Math.floor(Math.random() * 1000)
-    req.body.id = userId
-    const newUsers = users.push(req.body)
-    res.status(201).json({msg:"Registration successful.Please login", newUser})
-}
+exports.register = asyncHandler(async(req,res,next) => {
+    const fullname = req.body.firstname  + " " + req.body.lastname
+   try{
+    const user = await User.create({
+        username: req.body.username,
+        email: req.body.email,
+        password: req.body.password,
+        fullname,
 
-exports.login = async(req,res) =>{
+    })
+   }catch(error){
+        next(error)
+   }
+})
+
+exports.login = asyncHandler(async(req,res) => {
     res.status(200).json({message : "You have successfully logged in"})
-}
+})
 
-exports.fetchUsers = async(req,res) =>{
+exports.fetchUsers = asyncHandler(async(req,res) => {
+    //const users = await User.find()
+    //res.status(200).json({users})
+    const users = await User.find()
     res.status(200).json({users})
-}
-
+})
 
 //Other ways to export functions
 
